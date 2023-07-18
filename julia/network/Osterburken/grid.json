@@ -1,0 +1,188 @@
+{
+  "nodes": [
+    {
+      "name": "bus0",
+      "params": {
+        "U": 1,
+        "Y_n": 0
+      },
+      "type": "SlackAlgebraic"
+    },
+    {
+      "name": "bus1",
+      "params": {
+        "Nqt": 1,
+        "P0": -0.1,
+        "V0": 1.0,
+        "Npt": 1,
+        "Tq": 0.5,
+        "Nqs": 1,
+        "Q0": -0.5,
+        "Nps": 0.6,
+        "Tp": 0.5,
+        "Y_n": 0
+      },
+      "type": "ExponentialRecoveryLoad"
+    },
+    {
+      "name": "bus2",
+      "params": {
+        "T_d_dash": 6.1,
+        "D": 2,
+        "X_d": 1.05,
+        "X_q": 0.98,
+        "Ω": 50,
+        "X_d_dash": 0.185,
+        "T_q_dash": 0.4,
+        "X_q_dash": 0.36,
+        "P": 0.942,
+        "H": 6.54,
+        "E_f": 1,
+        "Y_n": 0
+      },
+      "type": "FourthOrderEq"
+    },
+    {
+      "name": "bus3",
+      "params": {
+        "I_r": 0.8,
+        "Y_n": 0
+      },
+      "type": "CSIMinimal"
+    },
+    {
+      "name": "bus4",
+      "params": {
+        "Nqt": 18,
+        "P0": -0.1,
+        "V0": 1.0,
+        "Npt": 3,
+        "Tq": 0.1,
+        "Nqs": 2,
+        "Q0": -0.0025,
+        "Nps": 0.6,
+        "Tp": 0.01,
+        "Y_n": 0
+      },
+      "type": "ExponentialRecoveryLoad"
+    },
+    {
+      "name": "bus5",
+      "params": {
+        "I_r": 0.15,
+        "Y_n": 0
+      },
+      "type": "CSIMinimal"
+    },
+    {
+      "name": "bus6",
+      "params": {
+        "I_r": 0.25,
+        "Y_n": 0
+      },
+      "type": "CSIMinimal"
+    },
+    {
+      "name": "bus7",
+      "params": {
+        "ωb": 50,
+        "P": -0.1,
+        "J": 0.1,
+        "Tm": 1,
+        "B": 0.1,
+        "Y_n": 0
+      },
+      "type": "InductionMotor"
+    }
+  ],
+  "lines": [
+    {
+      "name": "branch1",
+      "params": {
+        "from": "bus0",
+        "Y": {
+          "re": 0.8333333333333334,
+          "im": -0.8333333333333334
+        },
+        "to": "bus1"
+      },
+      "type": "StaticLine"
+    },
+    {
+      "name": "branch2",
+      "params": {
+        "from": "bus0",
+        "Y": {
+          "re": 166.66666666666666,
+          "im": -166.66666666666666
+        },
+        "to": "bus2"
+      },
+      "type": "StaticLine"
+    },
+    {
+      "name": "branch3",
+      "params": {
+        "from": "bus0",
+        "Y": {
+          "re": 0.8771929824561404,
+          "im": -0.8771929824561404
+        },
+        "to": "bus3"
+      },
+      "type": "StaticLine"
+    },
+    {
+      "name": "branch4",
+      "params": {
+        "y": {
+          "re": 0.0,
+          "im": -0.6666666666666666
+        },
+        "t_ratio": 0.5,
+        "from": "bus0",
+        "to": "bus4"
+      },
+      "type": "Transformer"
+    },
+    {
+      "name": "branch5",
+      "params": {
+        "y": {
+          "re": 0.0,
+          "im": -3.3333333333333335
+        },
+        "t_ratio": 0.5,
+        "from": "bus0",
+        "to": "bus5"
+      },
+      "type": "Transformer"
+    },
+    {
+      "name": "branch6",
+      "params": {
+        "from": "bus0",
+        "Y": {
+          "re": 0.23809523809523808,
+          "im": -0.23809523809523808
+        },
+        "to": "bus6"
+      },
+      "type": "StaticLine"
+    },
+    {
+      "name": "branch7",
+      "params": {
+        "y": {
+          "re": 0.5555555555555556,
+          "im": -0.5555555555555556
+        },
+        "t_ratio": 0.5,
+        "from": "bus0",
+        "to": "bus7"
+      },
+      "type": "Transformer"
+    }
+  ],
+  "version": "1"
+}
