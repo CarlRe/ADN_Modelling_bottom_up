@@ -16,12 +16,7 @@ R = 0.3;
 X = 0.3;
 #Leitungslänge als variable 
 length1 = 20;
-length2 = 2.1;
-length3 = 1.9;
-length4 = 2;
-length5 = 2;
-length6 = 2;
-length7 = 2;
+
 #Leitungsbeläge
 #Y = 1 / (length*R + 1*im*length*X)
 

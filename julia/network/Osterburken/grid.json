@@ -3,31 +3,29 @@
     {
       "name": "bus0",
       "params": {
-        "U": 1,
+        "P": 1.0,
+        "H": 1.0,
+        "Ω": 50,
+        "D": 2.0,
+        "Γ": 20,
+        "V": 1,
         "Y_n": 0
       },
-      "type": "SlackAlgebraic"
+      "type": "SwingEqLVS"
     },
     {
       "name": "bus1",
       "params": {
-        "Nqt": 1,
-        "P0": -0.1,
-        "V0": 1.0,
-        "Npt": 1,
-        "Tq": 0.5,
-        "Nqs": 1,
-        "Q0": -0.5,
-        "Nps": 0.6,
-        "Tp": 0.5,
+        "P": 0.1,
+        "Q": 0.1,
         "Y_n": 0
       },
-      "type": "ExponentialRecoveryLoad"
+      "type": "PQAlgebraic"
     },
     {
       "name": "bus2",
       "params": {
-        "T_d_dash": 6.1,
+        "T_d_dash": 1.1,
         "D": 2,
         "X_d": 1.05,
         "X_q": 0.98,
@@ -35,7 +33,7 @@
         "X_d_dash": 0.185,
         "T_q_dash": 0.4,
         "X_q_dash": 0.36,
-        "P": 0.942,
+        "P": 0.1,
         "H": 6.54,
         "E_f": 1,
         "Y_n": 0
@@ -45,54 +43,56 @@
     {
       "name": "bus3",
       "params": {
-        "I_r": 0.8,
+        "tau_u": 1.9998,
+        "K_omega": 40000,
+        "K_iomega": 0.02,
+        "K_pomega": 0.001,
+        "omega_ini": 50,
+        "P": 0.2,
+        "omega_r": 50,
+        "V_r": 1,
+        "Q_r": 0.2,
+        "K_v": 0.8,
         "Y_n": 0
       },
-      "type": "CSIMinimal"
+      "type": "GridFollowingTecnalia"
     },
     {
       "name": "bus4",
       "params": {
-        "Nqt": 18,
-        "P0": -0.1,
-        "V0": 1.0,
-        "Npt": 3,
-        "Tq": 0.1,
-        "Nqs": 2,
-        "Q0": -0.0025,
-        "Nps": 0.6,
-        "Tp": 0.01,
-        "Y_n": 0
+        "Xs": 5,
+        "P": -0.2,
+        "T": 10,
+        "Y_n": 0,
+        "H": 1,
+        "Xt": 0.5,
+        "ω0": 50
       },
-      "type": "ExponentialRecoveryLoad"
+      "type": "Motor"
     },
     {
       "name": "bus5",
       "params": {
-        "I_r": 0.15,
-        "Y_n": 0
+        "Y_n": 0,
+        "P0": -0.2,
+        "F": -0.8,
+        "A": 0.1,
+        "D": 2,
+        "B": 0.1,
+        "Q0": -0.1,
+        "E": -0.2,
+        "C": 0.8
       },
-      "type": "CSIMinimal"
+      "type": "ZIP"
     },
     {
       "name": "bus6",
       "params": {
-        "I_r": 0.25,
-        "Y_n": 0
-      },
-      "type": "CSIMinimal"
-    },
-    {
-      "name": "bus7",
-      "params": {
-        "ωb": 50,
         "P": -0.1,
-        "J": 0.1,
-        "Tm": 1,
-        "B": 0.1,
+        "Q": -0.2,
         "Y_n": 0
       },
-      "type": "InductionMotor"
+      "type": "PQAlgebraic"
     }
   ],
   "lines": [
@@ -101,8 +101,8 @@
       "params": {
         "from": "bus0",
         "Y": {
-          "re": 0.8333333333333334,
-          "im": -0.8333333333333334
+          "re": 1.6666666666666667,
+          "im": -1.6666666666666667
         },
         "to": "bus1"
       },
@@ -113,75 +113,36 @@
       "params": {
         "from": "bus0",
         "Y": {
-          "re": 166.66666666666666,
-          "im": -166.66666666666666
+          "re": 1.6666666666666667,
+          "im": -1.6666666666666667
         },
         "to": "bus2"
       },
       "type": "StaticLine"
     },
     {
-      "name": "branch3",
+      "name": "branch5",
       "params": {
         "from": "bus0",
         "Y": {
-          "re": 0.8771929824561404,
-          "im": -0.8771929824561404
+          "re": 1.6666666666666667,
+          "im": -1.6666666666666667
         },
-        "to": "bus3"
-      },
-      "type": "StaticLine"
-    },
-    {
-      "name": "branch4",
-      "params": {
-        "y": {
-          "re": 0.0,
-          "im": -0.6666666666666666
-        },
-        "t_ratio": 0.5,
-        "from": "bus0",
-        "to": "bus4"
-      },
-      "type": "Transformer"
-    },
-    {
-      "name": "branch5",
-      "params": {
-        "y": {
-          "re": 0.0,
-          "im": -3.3333333333333335
-        },
-        "t_ratio": 0.5,
-        "from": "bus0",
         "to": "bus5"
       },
-      "type": "Transformer"
+      "type": "StaticLine"
     },
     {
       "name": "branch6",
       "params": {
         "from": "bus0",
         "Y": {
-          "re": 0.23809523809523808,
-          "im": -0.23809523809523808
+          "re": 1.6666666666666667,
+          "im": -1.6666666666666667
         },
         "to": "bus6"
       },
       "type": "StaticLine"
-    },
-    {
-      "name": "branch7",
-      "params": {
-        "y": {
-          "re": 0.5555555555555556,
-          "im": -0.5555555555555556
-        },
-        "t_ratio": 0.5,
-        "from": "bus0",
-        "to": "bus7"
-      },
-      "type": "Transformer"
     }
   ],
   "version": "1"

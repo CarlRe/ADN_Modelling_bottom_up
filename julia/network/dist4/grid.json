@@ -1,0 +1,101 @@
+{
+  "nodes": [
+    {
+      "name": "bus1",
+      "params": {
+        "U": 1,
+        "Y_n": 0
+      },
+      "type": "SlackAlgebraic"
+    },
+    {
+      "name": "bus2",
+      "params": {
+        "T_d_dash": 1.1,
+        "D": 2,
+        "X_d": 1.05,
+        "X_q": 0.98,
+        "Ω": 50,
+        "X_d_dash": 0.185,
+        "T_q_dash": 0.4,
+        "X_q_dash": 0.36,
+        "P": 0.05,
+        "H": 1.54,
+        "E_f": 1,
+        "Y_n": 0
+      },
+      "type": "FourthOrderEq"
+    },
+    {
+      "name": "bus3",
+      "params": {
+        "tau_u": 1.9998,
+        "K_omega": 40000,
+        "K_iomega": 0.02,
+        "K_pomega": 0.001,
+        "omega_ini": 50,
+        "P": 0.1,
+        "omega_r": 50.0,
+        "V_r": 1,
+        "Q_r": 0.2,
+        "K_v": 0.8,
+        "Y_n": 0
+      },
+      "type": "GridFollowingTecnalia"
+    },
+    {
+      "name": "bus4",
+      "params": {
+        "Y_n": 0,
+        "P0": -0.1,
+        "F": -0.8,
+        "A": 0.1,
+        "D": 2,
+        "B": 0.1,
+        "Q0": -0.01,
+        "E": -0.2,
+        "C": 0.8
+      },
+      "type": "ZIP"
+    }
+  ],
+  "lines": [
+    {
+      "name": "branch1",
+      "params": {
+        "from": "bus1",
+        "Y": {
+          "re": 3.3333333333333335,
+          "im": -3.3333333333333335
+        },
+        "to": "bus2"
+      },
+      "type": "StaticLine"
+    },
+    {
+      "name": "branch2",
+      "params": {
+        "from": "bus1",
+        "Y": {
+          "re": 3.3333333333333335,
+          "im": -3.3333333333333335
+        },
+        "to": "bus3"
+      },
+      "type": "StaticLine"
+    },
+    {
+      "name": "branch4",
+      "params": {
+        "from": "bus1",
+        "Y": {
+          "re": 3.3333333333333335,
+          "im": -3.3333333333333335
+        },
+        "to": "bus4"
+      },
+      "type": "StaticLine"
+    }
+  ],
+  "version": "1"
+}
