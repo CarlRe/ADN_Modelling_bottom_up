@@ -6,14 +6,14 @@ include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models
 
 buses = OrderedDict(
       "bus1" => SlackAlgebraic(U=1),
-      "bus2" => SwingEqLVS(H=5., P=0.2, D=1., Ω=50., Γ=20., V=1.0), 
-      "bus3" => PQAlgebraic(P=-0.2, Q= 0.),
+      "bus2" => SwingEqLVS(H=5., P=-1., D=1., Ω=50., Γ=20., V=1.0), 
+      "bus3" => PQAlgebraic(P = 1.,Q=0.)
       );  
 
 buses1 = OrderedDict(
       "bus1" => PVAlgebraic(P=0.,V=1.0),
-      "bus2" => SwingEqLVS(H=5., P=0.2, D=1., Ω=50., Γ=20., V=1.0),
-      "bus3" => PQAlgebraic(P=-0.2, Q= 0.),
+      "bus2" => SwingEqLVS(H=5., P=-1., D=1., Ω=50., Γ=20., V=1.0), 
+      "bus3" => CSIMinimal(I_r=1.), 
       );  
 
 Z₀ = 16 # per unit Impedanz   [Ω] 
@@ -33,7 +33,7 @@ pg1 = PowerGrid(buses1, branches)
 operationpoint = find_operationpoint(pg,solve_powerflow=true,sol_method =:dynamic)
 
 timespan= (0.0,10.)
-fault = PowerPerturbation(node= "bus3",fault_power=-0.1,tspan_fault = (2.,3.),var=:P)
+fault = PowerPerturbation(node= "bus2",fault_power=-0.,tspan_fault = (2.,3.),var=:P)
 #state = State(pg1, operationpoint[:])  
 #solution = simulate(fault, state , timespan)
 
@@ -51,8 +51,7 @@ plot_p = plot(sol.dqsol.t,p_sim');plot!(sol1.dqsol.t,p_sim1',title="P")
 
 plot( plot_v,plot_p;
         layout=(1,2),
-        size = (500, 250),
+        size = (1000, 500),
         lw=3,
-        plot_title = "PvSwingPq",
+        plot_title = "PvSwingCSI",
         xlabel="t[s]")
-

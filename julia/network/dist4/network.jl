@@ -1,10 +1,10 @@
-using PowerDynamics
+using .PowerDynamics
 using OrderedCollections: OrderedDict
 using Plots
-import PowerDynamics: dimension, symbolsof, construct_vertex
 
-include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models\components.jl")
-include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\plot.jl")
+
+#include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models\components.jl")
+#include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\plot.jl")
 
 buses = OrderedDict(
     # "bus1" => SlackAlgebraic(U=1),
@@ -51,9 +51,9 @@ _, result = power_flow(powergrid)
 v = [result["solution"]["bus"][string(k)]["vm"] for k in 1:3]
 va = [result["solution"]["bus"][string(k)]["va"] for k in 1:3]
 =#
-_, result = power_flow(powergrid)
+#_, result = power_flow(powergrid)
 #ic = ( v .* exp.(1im .* va))
-operationpoint = find_operationpoint(powergrid, solve_powerflow = true, sol_method = :dynamic)
+#operationpoint = find_operationpoint(powergrid, solve_powerflow = true, sol_method = :dynamic)
 
 
 #=

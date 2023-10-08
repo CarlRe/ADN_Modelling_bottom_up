@@ -1,0 +1,74 @@
+using .PowerDynamics
+using OrderedCollections: OrderedDict
+using Plots
+include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models\components.jl")
+include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models\LineParameters.jl")
+
+buses = OrderedDict(
+      "bus1" => SlackAlgebraic(U=1.),
+      "bus2" => VoltageDependentLoad(P=-0.2,Q=0.,U=1.,A=0.3,B=0.3), 
+      );  
+
+buses1 = OrderedDict(
+      "bus1" => PVAlgebraic(P=0.2,V=1.0),
+      "bus2" => VoltageDependentLoad(P=-0.2,Q=0.,U=1.,A=0.,B=0.), 
+      );  
+#=
+#Leitungsparameter 
+Z₀ = 16 # per unit Impedanz   [Ω] 
+R = 0.12; #Ω/km  R = 0.2; #Ω/km
+X = 0.12; #X = 0.35;
+=# 
+length = 1.
+R=0.3
+X=0.15
+branches=OrderedDict(
+    "branch1" => StaticLine(from= "bus1", to = "bus2", Y = Z₀/(length*(R+X*im))),
+     );
+
+pg = PowerGrid(buses, branches)
+pg1 = PowerGrid(buses1, branches)
+  
+operationpoint = find_operationpoint(pg,solve_powerflow=true,sol_method =:dynamic)
+
+timespan= (0.0,20.)
+fault = PowerPerturbation(node= "bus2",fault_power=-0.15,tspan_fault = (2.,5.),var=:P)
+fault1 = ChangeInitialConditions(node="bus2", var=:v, f=Inc(-0.3))
+fault2 = NodeParameterChange(node = "bus2", value = 0.9, tspan_fault = (10.,20.),var=:U)
+
+sol= simulate(fault2, pg, operationpoint, timespan)
+#sol1= simulate(fault, pg1, operationpoint, timespan)
+
+#=
+v_sim1=sol1(sol1.dqsol.t,:,:v)
+p_sim1=sol1(sol1.dqsol.t,:,:p)
+ω_sim1=sol1(sol1.dqsol.t,["bus2"],:ω)
+
+plot_v1=plot(sol1.dqsol.t,v_sim1',label=["Pv" "Swing"],title="V")
+plot_p1=plot(sol1.dqsol.t,p_sim1',label=["Pv" "Swing"],title="P")
+plot_ω1=plot(sol1.dqsol.t,(ω_sim1')/(2*pi),label=["Swing"],title="f")
+plot( plot_v1,plot_p1,plot_ω1;
+        layout=(3,1),
+        size = (1000, 500),
+        lw=3,
+        plot_title = "PvSwing",
+        xlabel="t[s]")
+
+=#
+
+v_sim=sol(sol.dqsol.t,:,:v)
+p_sim=sol(sol.dqsol.t,:,:p)
+
+
+plot_v= plot(sol.dqsol.t,v_sim',label=["Slack" "VDL"])
+plot_p = plot(sol.dqsol.t,p_sim',label=["Swimg" "VDL"])
+
+
+plot( plot_v,plot_p;
+        layout=(1,2),
+        size = (1000, 500),
+        lw=3,
+        plot_title = "PvSwing",
+        xlabel="t[s]")
+
+ 

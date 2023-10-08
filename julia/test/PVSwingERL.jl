@@ -13,7 +13,7 @@ buses = OrderedDict(
 buses1 = OrderedDict(
       "bus1" => PVAlgebraic(P=0.,V=1.0),
       "bus2" => SwingEqLVS(H=5., P=0.2, D=1., Ω=50., Γ=20., V=1.0),
-      "bus3" => PQAlgebraic(P=-0.2, Q= 0.),
+      "bus3" => ExponentialRecoveryLoad(P0=-0.2, Q0=-0., Nps=0.1, Npt=0.1, Nqs=0.1, Nqt=0.1, Tp=0.1, Tq=0.1, V0=1.)
       );  
 
 Z₀ = 16 # per unit Impedanz   [Ω] 
@@ -34,11 +34,9 @@ operationpoint = find_operationpoint(pg,solve_powerflow=true,sol_method =:dynami
 
 timespan= (0.0,10.)
 fault = PowerPerturbation(node= "bus3",fault_power=-0.1,tspan_fault = (2.,3.),var=:P)
-#state = State(pg1, operationpoint[:])  
-#solution = simulate(fault, state , timespan)
-
+fault1 = PowerPerturbation(node= "bus3",fault_power=-0.1,tspan_fault = (2.,3.),var=:P0) #ERL has P0 instead of P
 sol= simulate(fault, pg, operationpoint, timespan)
-sol1= simulate(fault, pg1, operationpoint, timespan)
+sol1= simulate(fault1, pg1, insert!(insert!( operationpoint[:],8,0.0),9,0.0), timespan)
 
 v_sim=sol(sol.dqsol.t,:,:v)
 v_sim1=sol1(sol1.dqsol.t,:,:v)
@@ -53,6 +51,5 @@ plot( plot_v,plot_p;
         layout=(1,2),
         size = (500, 250),
         lw=3,
-        plot_title = "PvSwingPq",
+        plot_title = "PvSwingERL",
         xlabel="t[s]")
-

@@ -1,0 +1,5 @@
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"

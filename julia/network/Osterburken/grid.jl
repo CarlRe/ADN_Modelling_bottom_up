@@ -1,65 +1,95 @@
-using PowerDynamics
+using .PowerDynamics
 using OrderedCollections: OrderedDict
 using Plots
-import PowerDynamics: dimension, symbolsof, construct_vertex
+using LinearAlgebra
+using JLD2
+#import .PowerDynamics: dimension, symbolsof, construct_vertex
 
 include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models\components.jl")
-include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\plot.jl")
-
+#include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\plot.jl")
+include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\models\LineParameters.jl")
+#include(raw"C:\Users\carlr\Documents\GitHub\ADN_Modelling_bottom_up\julia\DataPrePro\EMT_DQ.jl")
+V₀ = 1.24
+V₁ = 1.
+P_Load = -0.8667
+Q_Load = 0.025
+P_Gen = 0.08
 buses = OrderedDict(
-    "bus0" => SwingEqLVS(H=1., P=1.0, D=2., Ω=50, Γ=20, V=1), #Ersatz für Slack
-    #"bus0" => SlackAlgebraic(U=1),
-    # Erzeugung 
-    "bus1" => PQAlgebraic(P=0.1,Q=0.1),#Wind Einspeisung 
-    "bus2" => FourthOrderEq(T_d_dash=1.1, D=2, X_d=1.05, X_q=0.98,  Ω=50, X_d_dash=0.185, T_q_dash=0.4,  X_q_dash=0.36, P=0.1, H=6.54, E_f= 1), #Synchron Einspeisung
-    "bus3" => GridFollowingTecnalia(tau_u=1.9998,omega_ini=50,K_pomega=0.001,K_iomega=0.02,K_omega=40000,K_v=0.8,omega_r=50,V_r=1,P=0.2,Q_r=0.2),
-    
-    #Lasten
-    "bus4" => Motor(P = -0.2, ω0 = 50, Xs = 5, Xt = 0.5, T = 10, H = 1 ), #Motor Last 
-    "bus5" => ZIP(P0=-0.2,Q0=-0.1, A=0.1, B=0.1,C=0.8,D=2,E=-0.2,F=-0.8),
-    "bus6" => PQAlgebraic(P=-0.1, Q = -0.2) 
+    "bus1" => SlackAlgebraic(U=V₀),
+   # "bus2" => SwingEqLVS(H=10., P=0., D=2., Ω=50., Γ=10., V=V₁), 
+    "bus3" => ExponentialRecoveryLoad(P0=P_Load, Q0=Q_Load, Nps=2., Npt=1., Nqs=3., Nqt=1., Tp=0.1, Tq=1., V0=V₀),
+    #"bus4" => PQAlgebraic(P=0.1*P_Load, Q= 0.5*Q_Load),
+    #"bus5" => SwingEqLVS(H=2., P=0.1*P_Load, D=2.5, Ω=49.5, Γ=10., V=V₁), 
+    #"bus6" => VoltageDependentLoad(P=0.2*P_Load,Q= 0.5*Q_Load, U=V₁,A=0.3,B=0.3),
+    #"bus7" => FourthOrderEq(T_d_dash=7.4, D=2, X_d=0.8979, X_q=0.646, Ω=50, X_d_dash=0.2995, T_q_dash=0.4, X_q_dash=0.646, P=P_Gen, H=5., E_f=V₁),
     );
 #Leitungsparameter 
-R = 0.3;
-X = 0.3;
+R = 0.2;
+X = 0.5;
 #Leitungslänge als variable 
-length1 = 1;
-length2 = 1;
-length3 = 1;
-length4 = 1;
-length5 = 1;
-length6 = 1;
-length7 = 1;
+
 #Leitungsbeläge
 #Y = 1 / (length*R + 1*im*length*X)
-
+length0 = 10.
+length1 = 0.1
+length2 = 3.
+length3 = 5.
 branches=OrderedDict(
-   
-    "branch1" => StaticLine(from= "bus0", to = "bus1", Y = 1 / (length1*R + 1*im*length1*X)),
-    "branch2" => StaticLine(from= "bus0", to = "bus2", Y =  1 / (length2*R + 1*im*length2*X)),
-   # "branch3" => StaticLine(from= "bus0", to = "bus3", Y =  1 / (length3*R + 1*im*length3*X)),
-  #  "branch4" => StaticLine(from= "bus0", to = "bus4", Y =  1 / (length4*R +1*im*length4*X)),
-    "branch5" => StaticLine(from= "bus0", to = "bus5", Y =  1 / (length5*R+ 1*im*length5*X)),
-    "branch6" => StaticLine(from = "bus0", to = "bus6",Y =  1 / (length6*R + 1*im*length6*X))
-    #"branch7" => StaticLine(from= "bus0", to ="bus7", Y =  1 / (length7*R+1*im*length7*X))
-    );
+  #  "branch1" => StaticLine(from= "bus1", to = "bus2", Y = 16/(length0*(R+im*X))),
+    "branch2" => StaticLine(from= "bus1", to = "bus3", Y = Y₀/length1),
+    #"branch3" => StaticLine(from= "bus1", to = "bus4", Y = Y₀/length1),
+    #"branch4" => StaticLine(from= "bus4", to = "bus5", Y = Y₀/length2),
+    #"branch5" => StaticLine(from= "bus4", to = "bus6", Y = Y₀/length3),
+    #"branch6" => StaticLine(from= "bus1", to = "bus7", Y = Y₀/length2),
+     );
 #
 
 powergrid = PowerGrid(buses, branches)
 write_powergrid(powergrid, joinpath(@__DIR__,"grid.json"), Json)
-#operationpoint = find_operationpoint(powergrid,sol_method = :nlsolve)
-timespan= (0.0,200.)
-fault1 = ChangeInitialConditions(node = "bus2", var=:v, f = Inc(0.1))
-fault2 = PowerPerturbation(node= "bus1",fault_power=0.15,tspan_fault = (120.,125.),var=:P)
-fault3 = PowerPerturbation(node= "bus5",fault_power=-0.19,tspan_fault = (2.,5.),var=:P0)
-#solution = simulate(fault3, powergrid, operationpoint, timespan)
-#state_init = [1,0,0.1,1,0,1,0,0.1,1,0,1,0,1,0,1,0]
-#state = State(powergrid,state_init)
-states =  rand(systemsize(powergrid))
-state = State(powergrid,states )
-solution = simulate(fault2, state, timespan) 
-#plot = create_plot(solution)
-#v
-#plot(solution.dqsol)
+#operationpoint = find_operationpoint(powergrid,solve_powerflow = true, sol_method = :dynamic)
+operationpoint = find_operationpoint(powergrid, sol_method = :dynamic)
+timespan= (0.0,4.)
+fault = NodeParameterChange(node = "bus1", value = 1.23, tspan_fault = (0.1,4.),var=:U)  
+solution = simulate(fault, powergrid, operationpoint, timespan)
 
 
+np_powergrid = fault(powergrid)
+regular = rhs(powergrid)
+error = rhs(np_powergrid)
+
+if regular.mass_matrix != error.mass_matrix || length(regular.syms) != length(error.syms)
+    error("Change of MassMatrix or system size in abstract pertubation not supported!")
+end
+
+# wrap f and introduce parameter: if p=true no error, if p=false errorstate
+_f = (dx, x, p, t) -> p ? regular(dx,x,nothing,t) : error(dx,x,nothing,t)
+
+f = ODEFunction(_f, mass_matrix = regular.mass_matrix, syms = regular.syms)
+
+problem = ODEProblem{true}(f, operationpoint, timespan, true)
+save("sim.jld2", "problem", problem )
+#display("MassMatrix is singular?: "*string(issingular(f.mass_matrix)))
+display("Rang(M): "*string(rank(f.mass_matrix)))
+display("Size(M): "*string(size(f.mass_matrix)))
+
+
+v_sim=solution(solution.dqsol.t,["bus1", "bus3"],:v)
+p_sim=solution(solution.dqsol.t,[ "bus3"],:p)
+q_sim=solution(solution.dqsol.t,[ "bus3"],:q)
+sim = [v_sim,p_sim,q_sim]
+save("sim.jld2", "sim", sim )
+#ω_sim=solution(solution.dqsol.t,["bus2"],:ω)
+
+plot_v= plot(solution.dqsol.t,v_sim',label=["Slack" " Swing" "ERL"],title="V in p.u.")
+plot_q = plot(solution.dqsol.t,q_sim',label=[ "ERL"],title="Q")
+plot_p = plot(solution.dqsol.t,p_sim',label=[ "ERL"],title="P")
+#plot_ω=plot(solution.dqsol.t,(ω_sim')/(2*pi),label="Swing",title="Δf in Hz")
+
+plot( plot_v,plot_p,plot_q;
+        layout=(3,1),
+        size = (1500, 1100),
+        lw=1,
+        plot_title = "grid",
+        xlabel="t[s]")
+
+#savefig("ERL.png")

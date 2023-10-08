@@ -1,5 +1,6 @@
-using PowerDynamics
+using .PowerDynamics
 using Plots
+using PGFPlotsX
 
 function create_plot(sol)
     generator_indices = findall(bus -> typeof(bus) == SwingEqLVS,powergrid.nodes)
